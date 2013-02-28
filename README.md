@@ -55,6 +55,21 @@ public function registerBundles()
 }
 ```
 
+## Configuration
+
+```yml
+# app/config/config.yml
+concept_it_orient_db:
+    host:               "127.0.0.1"
+    port:               2480
+    user:               "user"
+    password:           "password"
+    dbname:             "dbname"
+    proxy_dir:          "%kernel.root_dir%/cache"
+    domain_dir:         "%kernel.root_dir%/../src/YourBundle/Entity"
+    domain_namespace:   "YourBundle\Entity"
+```
+
 ## Authors
 
 Tomasz Cyrankowski - <tomek@concept-it.pl>
