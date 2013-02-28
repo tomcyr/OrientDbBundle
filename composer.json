@@ -1,0 +1,27 @@
+{
+    "name": "concept-it/orient-db-bundle",
+    "type": "symfony-bundle",
+    "description": "Integrates Doctrine OrientDB ODM with Symfony2 with my custom persist and remove methods.",
+    "keywords": ["orient", "db", "bundle", "odm"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomasz Cyrankowski",
+            "email": "tomek@cocncept-it.pl",
+            "homepage": "http://concept-it.pl"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/tomcyr/OrientDbBundle/issues"
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/symfony": "2.1.*",
+        "doctrine/orientdb-odm": "dev-master",
+    },
+    "autoload": {
+        "psr-0": { "ConceptIt\\OrientDbBundle": "" }
+    },
+    "target-dir": "ConceptIt/OrientDbBundle",
+    "minimum-stability": "dev"
+}
