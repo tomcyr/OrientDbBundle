@@ -81,7 +81,7 @@ concept_it_orient_db:
         $om = $this->get('conceptit.orientdb');
         $test = new \ConceptIt\SmartShopperBundle\Entity\Test();
         $test->setName('Johny Walker');
-        $manager->persist($test);
+        $om->persist($test);
         var_dump($test);die;
     }
 ```
