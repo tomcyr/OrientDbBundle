@@ -6,8 +6,8 @@ Integrates Doctrine OrientDB ODM with Symfony2 with my custom persist and remove
 ## Requirements
 
 * PHP 5.3+
-* Symfony2
-* Orientdb-ODM
+* [Symfony2](http://symfony.com)
+* [Doctrine OrientDB ODM](http://www.doctrine-project.org/projects/orientdb-odm.html)
 
 ## Installation
 
