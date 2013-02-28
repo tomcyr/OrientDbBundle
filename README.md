@@ -70,6 +70,22 @@ concept_it_orient_db:
     domain_namespace:   "YourBundle\Entity"
 ```
 
+## Example usage in Action
+
+```php
+    /**
+     * @Route("/api/test")
+     */
+    public function testAction()
+    {
+        $om = $this->get('conceptit.orientdb');
+        $test = new \ConceptIt\SmartShopperBundle\Entity\Test();
+        $test->setName('Johny Walker');
+        $manager->persist($test);
+        var_dump($test);die;
+    }
+```
+
 ## Authors
 
 Tomasz Cyrankowski - <tomek@concept-it.pl>
