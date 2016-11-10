@@ -3,81 +3,72 @@
 namespace ConceptIt\OrientDbBundle\Services;
 
 use Doctrine\OrientDB\Binding\HttpBinding;
-use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB as ODM;
 use Doctrine\ODM\OrientDB\Manager;
 
 class OrientDbService
 {
-	protected $binding;
-	protected $mapper;
-	protected $manager;
+    protected $binding;
+    protected $manager;
 
-	public function __construct(Mapper $mapper, HttpBinding $binding, Manager $manager)
-	{
-		$this->mapper = $mapper;
-		$this->binding = $binding;
-		$this->manager = $manager;
-	}
-
-	public function getBinding()
-	{
-		return $this->binding;
-	}
-
-	protected function getMapper()
-	{
-		return $this->mapper;
-	}
-
-	public function getManager()
-	{
-		return $this->manager;
-	}
-
-	public function getRepository($name)
-	{
-		return $this->getManager()->getRepository($name);
-	}
-
-	public function persist($object)
-	{
-		$json = $this->toJson($object);
-    if ($this->checkExists($object) === false) {
-      $response = $this->getBinding()->postDocument($json);
-      $rid = $response->getData();
-      $object->setRid($rid);
-    } else {
-      $response = $this->getBinding()->putDocument($object->getRid(), $json);
-      $result = $response->getData();
+    public function __construct(HttpBinding $binding, Manager $manager)
+    {
+        $this->binding = $binding;
+        $this->manager = $manager;
     }
 
-    return $object;
-	}
-
-	/**
-   *
-   * @param \stdClass $object
-   */
-  public function remove($object)
-  {
-  	if ($this->checkExists($object) === false) {
-      return false;
+    public function getBinding()
+    {
+        return $this->binding;
     }
-    $response = $this->getBinding()->deleteDocument($object->getRid());
-    $result = $response->getData();
-    $object->setRid(null);
 
-    return $result;
-  }
+    public function getManager()
+    {
+        return $this->manager;
+    }
 
-  public function flush()
-  {
-  	return;
-  }
+    public function getRepository($name)
+    {
+        return $this->getManager()->getRepository($name);
+    }
 
-	protected function toJson($object)
-  {
+    public function persist($object)
+    {
+        $json = $this->toJson($object);
+
+        if ($this->checkExists($object) === false) {
+            $response = $this->getBinding()->postDocument($json);
+            $rid = $response->getData();
+            $object->setRid($rid);
+        } else {
+            $response = $this->getBinding()->putDocument($object->getRid(), $json);
+            $result = $response->getData();
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param \stdClass $object
+     */
+    public function remove($object)
+    {
+        if ($this->checkExists($object) === false) {
+            return false;
+        }
+        $response = $this->getBinding()->deleteDocument($object->getRid());
+        $result = $response->getData();
+        $object->setRid(null);
+
+        return $result;
+    }
+
+    public function flush()
+    {
+        return;
+    }
+
+    protected function toJson($object)
+    {
         $data = (array) $object;
         foreach ($data as $key => $value) {
             $newKey = preg_replace('/[^a-z]/i', null, $key);
@@ -94,29 +85,25 @@ class OrientDbService
                 $data[$newKey] = $value->format('Y-m-d H:i:s');
             }
         }
-        $data['@class'] = join('', array_slice(explode('\\', get_class($object)), -1));
-        if(array_key_exists('rid', $data)){
+        $data['@class'] = implode('', array_slice(explode('\\', get_class($object)), -1));
+        if (array_key_exists('rid', $data)) {
             unset($data['rid']);
         }
-        if(array_key_exists('version', $data)){
+        if (array_key_exists('version', $data)) {
             $data['@version'] = $data['version'];
             unset($data['version']);
         }
 
         return json_encode($data);
-  }
+    }
 
-  protected function checkExists($object)
-  {
+    protected function checkExists($object)
+    {
         $rid = $object->getRid();
         if (empty($rid)) {
             return false;
         }
 
         return true;
-  }
-
-
-
-
+    }
 }

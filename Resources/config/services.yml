@@ -1,49 +1,50 @@
 parameters:
-    concept_it_orient_db.host:      %orientdb_host%
-    concept_it_orient_db.port:      %orientdb_port%
-    concept_it_orient_db.user:      %orientdb_user%
-    concept_it_orient_db.password:      %orientdb_password%
-    concept_it_orient_db.dbname:      %orientdb_dbname%
-    concept_it_orient_db.proxy_dir:      %kernel.root_dir%/cache
-    concept_it_orient_db.domain_dir:
-    concept_it_orient_db.domain_namespace:
+    concept_it_orient_db.host: '%orientdb_host%'
+    concept_it_orient_db.port: '%orientdb_port%'
+    concept_it_orient_db.user: '%orientdb_user%'
+    concept_it_orient_db.password: '%orientdb_password%'
+    concept_it_orient_db.dbname: '%orientdb_dbname%'
+    concept_it_orient_db.proxy_dir: '%kernel.root_dir%/cache%'
+    concept_it_orient_db.domain_dir: '%orientdb_domain_dir%'
+    concept_it_orient_db.domain_namespace: '%orientdb_domain_namespace%'
 
 services:
   orientdb.binding.parameters:
     class: Doctrine\OrientDB\Binding\BindingParameters
     arguments:
-      host:     %concept_it_orient_db.host%
-      port:     %concept_it_orient_db.port%
-      username: %concept_it_orient_db.user%
-      password: %concept_it_orient_db.password%
-      database: %concept_it_orient_db.dbname%
+      host:     '%concept_it_orient_db.host%'
+      port:     '%concept_it_orient_db.port%'
+      username: '%concept_it_orient_db.user%'
+      password: '%concept_it_orient_db.password%'
+      database: '%concept_it_orient_db.dbname%'
+
   orientdb.binding:
     class: Doctrine\OrientDB\Binding\HttpBinding
     arguments:
-      parameters: @orientdb.binding.parameters
-  odm:
+      parameters: '@orientdb.binding.parameters'
+
+  orientdb.odm.configuration:
+    class: Doctrine\ODM\OrientDB\Configuration
+    arguments:
+      - document_dirs: [{ '%concept_it_orient_db.domain_dir%' : '%concept_it_orient_db.domain_namespace%' }]
+        proxy_dir: '%concept_it_orient_db.proxy_dir%'
+
+  orientdb.odm:
     class: Doctrine\ODM\OrientDB\Manager
     arguments:
-      mapper: @odm.mapper
-      binding: @orientdb.binding
-  odm.mapper:
-    class: Doctrine\ODM\OrientDB\Mapper
-    arguments:
-      documentProxyDirectory: %concept_it_orient_db.proxy_dir%
-      annotationReader: @odm.annotationreader
-    calls:
-      - [setDocumentDirectories, [ %concept_it_orient_db.domain_dir% : %concept_it_orient_db.domain_namespace% ] ]
-      - [enableMismatchesTolerance, [ 0 : true ]]
-  odm.annotationreader:
+      binding: '@orientdb.binding'
+      configuration: '@orientdb.odm.configuration'
+
+  orientdb.odm.annotationreader:
     class: Doctrine\ODM\OrientDB\Mapper\Annotations\Reader
     arguments:
-      cacheReader: @cache.array
+      cacheReader: '@cache.array'
+
   cache.array:
     class: Doctrine\Common\Cache\ArrayCache
 
   conceptit.orientdb:
     class: ConceptIt\OrientDbBundle\Services\OrientDbService
     arguments:
-      mapper: @odm.mapper
-      binding: @orientdb.binding
-      manager: @odm
+      binding: '@orientdb.binding'
+      manager: '@orientdb.odm'
